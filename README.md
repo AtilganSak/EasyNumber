@@ -25,50 +25,97 @@ Add to `Packages/manifest.json`:
 
 ## Inspector Setup
 
-Set value directly from inspector using the `steps` array. Each element represents a magnitude:
+Set value from inspector using the `steps` array. Each element represents a magnitude:
 
-- Index 0 → ones (×1)
-- Index 1 → thousands (×1000)
-- Index 2 → millions (×1,000,000)
+- `x1` → ×1
+- `K`  → ×1,000
+- `M`  → ×1,000,000
+- `B`  → ×1,000,000,000
 
-![Inspector](https://github.com/AtilganSak/ProjectImages/blob/main/Easy%20Number/Screenshot_2.png)
+**Decimals** field controls how many decimal places are shown in the preview and `ToString()`.
 
 > If `steps` array is empty, value defaults to 0.
 
-## Usage
+## Creating from Code
 
 ```csharp
-// Display
-moneyText.text = easyNumber.ToString(); // e.g. "1.5K", "3.2M"
+EasyNumber money = 1500;                        // int
+EasyNumber money = 1500f;                       // float
+EasyNumber money = 1500.0;                      // double
+EasyNumber money = EasyNumber.Create(1500);     // decimals = 1 (default)
+EasyNumber money = EasyNumber.Create(1500, 2);  // decimals = 2
+EasyNumber money = EasyNumber.Zero;             // 0, decimals = 1
+```
 
-// Arithmetic
-easyNumber1 += easyNumber2;
-easyNumber1 += 1000;
-easyNumber1 *= 2.5;
+## Display
 
-// Comparison
-bool isGreater  = easyNumber1 > easyNumber2;
-bool isEnough   = easyNumber1 >= 500;
+```csharp
+moneyText.text = money.ToString();      // "1.5K"  (uses Decimals field)
+moneyText.text = money.ToString(2);     // "1.50K" (override)
+moneyText.text = money.ToString(0);     // "1K"
+
+Necessary.Convert(1500000, 2);          // "1.50M"
+```
+
+Suffixes: `""` `K` `M` `B` `T` `aa` → `az` `ba` → `bz` (57 tiers)
+
+## Arithmetic
+
+```csharp
+money += 1000;
+money -= other;
+money *= 2.5f;
+money /= 2;
+money = -money;
+```
+
+## Comparison
+
+```csharp
+bool a = money > other;
+bool b = money >= 500;
+bool c = money == other;
+bool d = money != 0;
+```
+
+## Utilities
+
+```csharp
+// Clamp
+money = EasyNumber.Clamp(money, EasyNumber.Zero, maxMoney);
+
+// Lerp (smooth UI transitions)
+displayed = EasyNumber.Lerp(displayed, target, 0.1);
+
+// Percent (progress bars)
+float fill = (float)money.Percent(maxMoney) / 100f;
 
 // Reset
-easyNumber.Clear();
+money.Clear();
 
 // Raw value
-double raw = easyNumber.Value;
+double raw = money.Value;
 ```
 
-## JSON / Save Support
+## JSON / Save
+
+Works out of the box with **Unity JsonUtility** and **Newtonsoft Json.NET** — `Value` and `Decimals` are public properties.
 
 ```csharp
-PlayerDB.Instance.money = easyNumber1;
-PlayerDB.Instance.Save();
+// JsonUtility
+string json = JsonUtility.ToJson(playerData);
 
-easyNumber2 = PlayerDB.Instance.money;
+// Json.NET
+string json = JsonConvert.SerializeObject(playerData);
+EasyNumber loaded = JsonConvert.DeserializeObject<EasyNumber>(json);
 ```
 
-## Supported Suffixes
+## Sorting
 
-`""` `K` `M` `B` `T` `aa` → `az` `ba` → `bz` (57 tiers)
+```csharp
+List<EasyNumber> numbers = ...;
+numbers.Sort(new EasyNumberComparer());
+```
 
 ## Requirements
 
