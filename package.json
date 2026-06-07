@@ -1,0 +1,22 @@
+{
+    "name": "com.atilgansak.easynumber",
+    "version": "1.0.0",
+    "displayName": "Easy Number",
+    "description": "Large number utility for Unity games. Inspector-friendly serializable struct with automatic suffix display (K, M, B, T, aa...) and arithmetic operators.",
+    "unity": "2019.4",
+    "unityRelease": "0f1",
+    "documentationUrl": "https://github.com/AtilganSak/EasyNumber",
+    "dependencies": {},
+    "keywords": [
+        "number",
+        "idle",
+        "incremental",
+        "large-number",
+        "utility"
+    ],
+    "author": {
+        "name": "AtilganSak",
+        "email": "sak.atilgan@gmail.com",
+        "url": "https://github.com/AtilganSak"
+    }
+}
